@@ -1,0 +1,126 @@
+﻿<Window x:Class="ShoesCompany.Windows.ProductsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ShoesCompany.Windows"
+        mc:Ignorable="d"
+        Title="ProductsWindow" Height="450" Width="800"
+        Icon="C:\C#\ShoesCompany\images\Icon.png">
+
+    <Window.Resources>
+        <!-- Стандартный конвертер видимости -->
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <!-- Наши кастомные конвертеры -->
+        <local:DiscountColorConverter x:Key="DiscountColorConverter"/>
+        <local:DiscountDecorationConverter x:Key="DiscountDecorationConverter"/>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Верхняя панель с данными пользователя -->
+        <DockPanel Grid.Row="0" Margin="10">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <TextBlock Text="Пользователь:" FontWeight="Bold" Margin="0,0,5,0"/>
+                <TextBlock x:Name="UserFullNameText"
+                           Foreground="DarkSlateGray"
+                           FontWeight="Bold"
+                           Margin="0,0,15,0"/>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Список товаров -->
+        <ListView x:Name="ProductsList"
+                  Grid.Row="1"
+                  Margin="10"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Background" Value="{Binding BackgroundBrush}"/>
+                    <Setter Property="Margin" Value="5"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="Gray"
+                            BorderThickness="1"
+                            CornerRadius="5"
+                            Padding="8"
+                            Background="{Binding BackgroundBrush}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="130"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Фото -->
+                            <Border BorderBrush="Black"
+                                    BorderThickness="1"
+                                    Margin="5">
+                                <Image Source="{Binding PhotoPath}"
+                                       Stretch="Uniform"/>
+                            </Border>
+
+                            <!-- Информация о товаре -->
+                            <StackPanel Grid.Column="1" Margin="10,0,10,0">
+                                <TextBlock Text="{Binding CategoryAndName}"
+                                           FontWeight="Bold"
+                                           FontSize="14"/>
+                                <TextBlock Text="Описание:" FontWeight="Bold" Margin="0,2,0,0"/>
+                                <TextBlock Text="{Binding Description}"
+                                           TextWrapping="Wrap"
+                                           MaxWidth="450"/>
+                                <TextBlock Text="Производитель:" FontWeight="Bold" Margin="0,2,0,0"/>
+                                <TextBlock Text="{Binding Manufacturer}"/>
+                                <TextBlock Text="Поставщик:" FontWeight="Bold" Margin="0,2,0,0"/>
+                                <TextBlock Text="{Binding Provider}"/>
+
+                                <!-- Цена: оригинальная и со скидкой -->
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                    <!-- Основная цена (всегда отображается) -->
+                                    <TextBlock Text="{Binding OriginalPriceText}"
+                                               FontWeight="Bold"
+                                               Foreground="{Binding HasDiscount, Converter={StaticResource DiscountColorConverter}}"
+                                               TextDecorations="{Binding HasDiscount, Converter={StaticResource DiscountDecorationConverter}}"/>
+
+                                    <!-- Итоговая цена (только если есть скидка) -->
+                                    <TextBlock Text="{Binding DiscountedPriceText}"
+                                               FontWeight="Bold"
+                                               Foreground="Black"
+                                               Margin="8,0,0,0"
+                                               Visibility="{Binding HasDiscount, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding UnitString}"/>
+                                <TextBlock Text="{Binding StockString}"/>
+                            </StackPanel>
+
+                            <!-- Блок скидки (оставлен как метка) -->
+                            <Border Grid.Column="2"
+                                    BorderBrush="Black"
+                                    BorderThickness="1"
+                                    Margin="5"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding DiscountText}"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Padding="10"/>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Window>
